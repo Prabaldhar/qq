@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Arpita</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300&family=Cinzel:wght@400;600&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cormorant', serif;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+            position: relative;
+        }
+        /* Film grain overlay */
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 10000;
+            animation: grainMove 0.5s steps(4) infinite;
+        }
+        
+        @keyframes grainMove {
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+            25% {
+                transform: translate(-2%, 2%);
+            }
+            50% {
+                transform: translate(2%, -2%);
+            }
+            75% {
+                transform: translate(-2%, -2%);
+            }
+        }
+        /* Letterbox bars */
+        
+        .letterbox {
+            position: fixed;
+            width: 100%;
+            height: 8vh;
+            background: #000;
+            z-index: 9999;
+            opacity: 0;
+        }
+        
+        .letterbox-top {
+            top: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .letterbox-bottom {
+            bottom: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .letterbox.active {
+            animation: letterboxIn 2s ease forwards;
+        }
+        
+        @keyframes letterboxIn {
+            to {
+                opacity: 1;
+            }
+        }
+        /* Enter Screen */
+        
+        #enterScreen {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(ellipse at center, #1a0a1e 0%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            transition: opacity 2s ease;
+        }
+        
+        #enterScreen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .enter-title {
+            font-size: 1.4rem;
+            font-weight: 300;
+            font-style: italic;
+            color: rgba(255, 212, 212, 0.7);
+            letter-spacing: 3px;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: slowFadeIn 3s ease forwards;
+        }
+        
+        @keyframes slowFadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        #enterBtn {
+            padding: 1.5rem 4rem;
+            font-size: 1rem;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            background: transparent;
+            border: 1px solid rgba(255, 212, 212, 0.4);
+            color: #ffd4d4;
+            cursor: pointer;
+            transition: all 0.6s ease;
+            opacity: 0;
+            animation: slowFadeIn 3s 1.5s ease forwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #enterBtn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 212, 212, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        
+        #enterBtn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        #enterBtn:hover {
+            border-color: #ffd4d4;
+            letter-spacing: 6px;
+        }
+        /* Mute Button */
+        
+        #muteBtn {
+            position: fixed;
+            top: calc(8vh + 20px);
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+        
+        #muteBtn:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        /* Main Container */
+        
+        #experience {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            overflow: hidden;
+        }
+        
+        #experience.active {
+            display: block;
+        }
+        /* Vignette effect */
+        
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+            pointer-events: none;
+            z-index: 100;
+        }
+        /* Scene Container */
+        
+        .scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 3s ease;
+            padding: 2rem;
+            overflow: hidden;
+        }
+        
+        .scene.active {
+            opacity: 1;
+        }
+        /* Cinematic text styling */
+        
+        .cinematic-text {
+            font-size: 2.2rem;
+            font-weight: 300;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            opacity: 0;
+            letter-spacing: 1px;
+            line-height: 1.8;
+            text-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+        }
+        
+        .cinematic-text.italic {
+            font-style: italic;
+            font-weight: 300;
+        }
+        /* Scene 1 - Distance */
+        
+        #scene1 {
+            background: linear-gradient(180deg, #000000 0%, #0a0a1a 40%, #1a1a2e 100%);
+            animation: slowZoomIn 15s ease-out forwards;
+        }
+        
+        @keyframes slowZoomIn {
+            from {
+                transform: scale(1.3);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+        
+        .deep-space {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: starTwinkle 4s ease-in-out infinite;
+        }
+        
+        @keyframes starTwinkle {
+            0%,
+            100% {
+                opacity: 0.2;
+                box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+            }
+            50% {
+                opacity: 1;
+                box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+            }
+        }
+        
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            opacity: 0;
+            animation: shoot 2s ease-out forwards;
+        }
+        
+        @keyframes shoot {
+            0% {
+                opacity: 1;
+                transform: translateX(0) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-300px) translateY(200px);
+            }
+        }
+        
+        .figure-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15%;
+            opacity: 0;
+        }
+        
+        .human-silhouette {
+            width: 60px;
+            height: 180px;
+            position: relative;
+            filter: blur(1.5px);
+            opacity: 0.5;
+        }
+        
+        .head {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            border-radius: 50%;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .body {
+            position: absolute;
+            width: 50px;
+            height: 90px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1));
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+        }
+        
+        .legs {
+            position: absolute;
+            width: 60px;
+            height: 70px;
+            top: 135px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .leg {
+            position: absolute;
+            width: 20px;
+            height: 70px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+        }
+        
+        .leg-left {
+            left: 5px;
+        }
+        
+        .leg-right {
+            right: 5px;
+        }
+        
+        .heart-center {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            font-size: 4rem;
+            opacity: 0;
+            filter: blur(2px) drop-shadow(0 0 30px rgba(255, 100, 150, 0.8));
+            animation: heartGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes heartGlow {
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(0.8);
+                filter: blur(2px) drop-shadow(0 0 30px rgba(255, 100, 150, 0.8));
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                filter: blur(1px) drop-shadow(0 0 50px rgba(255, 100, 150, 1));
+            }
+        }
+        /* Scene 2 - Longing */
+        
+        #scene2 {
+            background: linear-gradient(180deg, #1a1a2e 0%, #2d1b3d 30%, #5c3d63 60%, #ff9a9e 100%);
+            animation: dawnBreak 8s ease-in-out forwards;
+        }
+        
+        @keyframes dawnBreak {
+            from {
+                filter: brightness(0.3);
+            }
+            to {
+                filter: brightness(1);
+            }
+        }
+        
+        .light-rays {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            animation: raysAppear 4s 2s ease-in forwards;
+        }
+        
+        @keyframes raysAppear {
+            to {
+                opacity: 0.3;
+            }
+        }
+        
+        .ray {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to top, rgba(255, 255, 255, 0.4), transparent);
+            transform-origin: bottom;
+            animation: rayRotate 8s ease-in-out infinite;
+        }
+        
+        @keyframes rayRotate {
+            0%,
+            100% {
+                transform: rotate(-20deg);
+            }
+            50% {
+                transform: rotate(20deg);
+            }
+        }
+        
+        .moving-silhouettes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 400px;
+        }
+        
+        .moving-silhouettes .human-silhouette {
+            animation: walkCloser 6s 3s ease-in-out forwards;
+        }
+        
+        @keyframes walkCloser {
+            to {
+                transform: translateX(0);
+                margin: 0 -30px;
+            }
+        }
+        
+        .moving-silhouettes .human-silhouette:first-child {
+            transform: translateX(-200px);
+        }
+        
+        .moving-silhouettes .human-silhouette:last-child {
+            transform: translateX(200px);
+        }
+        /* Scene 3 - The Hug */
+        
+        #scene3 {
+            background: linear-gradient(180deg, #ffd4d4 0%, #ffe8e8 50%, #fff5f5 100%);
+        }
+        
+        .embrace-container {
+            position: relative;
+            width: 100%;
+            height: 70%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .teddy-bear {
+            position: absolute;
+            width: 120px;
+            height: 150px;
+            transition: all 3.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 5;
+        }
+        /* Enhanced teddy construction */
+        
+        .teddy-head {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle at 35% 35%, #e0b380, #c49563);
+            border-radius: 50%;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset 0 -8px 15px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 3;
+        }
+        
+        .teddy-ear {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: radial-gradient(circle at 40% 40%, #c49563, #a87d4f);
+            border-radius: 50%;
+            top: 8px;
+            box-shadow: inset 0 -3px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .teddy-ear.left {
+            left: -3px;
+        }
+        
+        .teddy-ear.right {
+            right: -3px;
+        }
+        
+        .teddy-ear-inner {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle, #f5d4a6, #e0b380);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .teddy-snout {
+            position: absolute;
+            width: 45px;
+            height: 32px;
+            background: radial-gradient(ellipse at 50% 40%, #f5d4a6, #d4a574);
+            border-radius: 50%;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset 0 -2px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .teddy-nose {
+            position: absolute;
+            width: 12px;
+            height: 10px;
+            background: #3d2817;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .teddy-eyes {
+            position: absolute;
+            width: 100%;
+            top: 32px;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 22px;
+            z-index: 2;
+        }
+        
+        .teddy-eye {
+            width: 10px;
+            height: 10px;
+            background: #3d2817;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+        }
+        
+        .teddy-body {
+            position: absolute;
+            width: 105px;
+            height: 110px;
+            background: radial-gradient(ellipse at 45% 35%, #d4a574, #b8935f);
+            border-radius: 48% 48% 52% 52%;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset 0 -12px 20px rgba(0, 0, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+        
+        .teddy-belly {
+            position: absolute;
+            width: 60px;
+            height: 65px;
+            background: radial-gradient(ellipse, rgba(245, 212, 166, 0.6), transparent);
+            border-radius: 50%;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .teddy-heart {
+            position: absolute;
+            top: 32%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+            z-index: 3;
+        }
+        
+        .teddy-arm {
+            position: absolute;
+            width: 32px;
+            height: 75px;
+            background: linear-gradient(to bottom, #c49563 0%, #b8935f 60%, #a87d4f 100%);
+            border-radius: 16px;
+            top: 85px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            transition: all 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .teddy-arm.left {
+            left: -8px;
+            transform: rotate(-25deg);
+            transform-origin: top center;
+        }
+        
+        .teddy-arm.right {
+            right: -8px;
+            transform: rotate(25deg);
+            transform-origin: top center;
+        }
+        
+        .teddy-paw {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            background: radial-gradient(circle at 40% 40%, #d4a574, #b8935f);
+            border-radius: 50%;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.15);
+        }
+        
+        .teddy-legs {
+            position: absolute;
+            width: 110px;
+            height: 50px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: space-between;
+            z-index: 1;
+        }
+        
+        .teddy-leg {
+            width: 38px;
+            height: 50px;
+            background: linear-gradient(to bottom, #c49563, #b8935f);
+            border-radius: 19px 19px 45% 45%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .teddy-foot {
+            position: absolute;
+            width: 42px;
+            height: 22px;
+            background: radial-gradient(ellipse at 50% 30%, #d4a574, #b8935f);
+            border-radius: 50%;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.15);
+        }
+        /* Teddy positioning */
+        
+        .teddy-bear.left-bear {
+            left: calc(50% - 180px);
+        }
+        
+        .teddy-bear.right-bear {
+            left: calc(50% + 60px);
+        }
+        /* ACTUAL HUGGING */
+        
+        .teddy-bear.hugging.left-bear {
+            left: calc(50% - 70px) !important;
+            z-index: 6 !important;
+        }
+        
+        .teddy-bear.hugging.right-bear {
+            left: calc(50% - 50px) !important;
+            z-index: 5 !important;
+        }
+        
+        .teddy-bear.hugging .teddy-arm.left {
+            transform: rotate(65deg) translateX(-15px);
+            z-index: 10;
+        }
+        
+        .teddy-bear.hugging .teddy-arm.right {
+            transform: rotate(-65deg) translateX(15px);
+            z-index: 10;
+        }
+        
+        .teddy-bear.hugging.left-bear .teddy-arm.right {
+            z-index: 1;
+        }
+        
+        .teddy-bear.hugging.right-bear .teddy-arm.left {
+            z-index: 1;
+        }
+        
+        .teddy-bear.hugging .teddy-head {
+            animation: headNuzzle 3s ease-in-out infinite;
+        }
+        
+        @keyframes headNuzzle {
+            0%,
+            100% {
+                transform: translateX(-50%) rotate(0deg);
+            }
+            50% {
+                transform: translateX(-50%) rotate(-3deg);
+            }
+        }
+        
+        .hug-button {
+            padding: 1.3rem 3.5rem;
+            font-size: 1.1rem;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            background: rgba(255, 255, 255, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            color: #5a3e36;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.5s ease;
+            opacity: 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hug-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        
+        .hug-button:hover::after {
+            width: 400px;
+            height: 400px;
+        }
+        
+        .hug-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(255, 255, 255, 0.5);
+        }
+        
+        .embrace-glow {
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.7) 0%, rgba(255, 180, 180, 0.4) 40%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 2.5s ease;
+            filter: blur(50px);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes glowPulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+        }
+        
+        .heart-burst {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .burst-heart {
+            position: absolute;
+            font-size: 2.5rem;
+            opacity: 0;
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: sparkleAnim 1.5s ease-out forwards;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+        
+        @keyframes sparkleAnim {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2) rotate(180deg);
+            }
+        }
+        /* Scene 4 - Love Letter */
+        
+        #scene4 {
+            background: linear-gradient(180deg, #fff5f5 0%, #ffe8dd 50%, #ffd4c8 100%);
+            animation: warmGlow 10s ease-in-out infinite alternate;
+        }
+        
+        @keyframes warmGlow {
+            from {
+                filter: brightness(1) saturate(1);
+            }
+            to {
+                filter: brightness(1.1) saturate(1.2);
+            }
+        }
+        
+        .letter-content {
+            max-width: 750px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.2);
+            padding: 3rem 2.5rem;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            transform: scale(0.95);
+            filter: blur(8px);
+            transition: all 2s ease;
+        }
+        
+        .letter-content.revealed {
+            transform: scale(1);
+            filter: blur(0);
+        }
+        
+        .love-line {
+            font-size: 1.7rem;
+            font-weight: 300;
+            color: #5a3e36;
+            opacity: 0;
+            margin: 1.2rem 0;
+            line-height: 1.9;
+            letter-spacing: 0.5px;
+        }
+        
+        .love-line.name {
+            font-size: 2.5rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            color: #d4526e;
+            text-shadow: 0 2px 10px rgba(212, 82, 110, 0.3);
+            margin: 1.5rem 0;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .love-line.name::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #d4526e, transparent);
+            animation: underlineGrow 2s 1s ease forwards;
+        }
+        
+        @keyframes underlineGrow {
+            to {
+                width: 100%;
+            }
+        }
+        /* Scene 5 - Forever */
+        
+        #scene5 {
+            background: linear-gradient(135deg, #ffeaa7 0%, #ff9a9e 40%, #fc8c84 70%, #d4526e 100%);
+            animation: sunsetPulse 6s ease-in-out infinite;
+        }
+        
+        @keyframes sunsetPulse {
+            0%,
+            100% {
+                filter: brightness(1);
+            }
+            50% {
+                filter: brightness(1.15);
+            }
+        }
+        
+        .eternal-embrace {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.15), transparent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 3rem;
+            position: relative;
+            animation: gentleFloat 4s ease-in-out infinite;
+        }
+        
+        @keyframes gentleFloat {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        .eternal-embrace::before {
+            content: '';
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: ripple 3s ease-out infinite;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        .embrace-icon {
+            font-size: 6rem;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+            opacity: 0.8;
+        }
+        
+        .final-words {
+            font-size: 2.5rem;
+            font-weight: 300;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+        }
+        
+        .eternal-heart {
+            font-size: 4rem;
+            animation: eternityBeat 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 100, 150, 0.6));
+        }
+        
+        @keyframes eternityBeat {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            7% {
+                transform: scale(1.25);
+            }
+            14% {
+                transform: scale(1);
+            }
+            21% {
+                transform: scale(1.15);
+            }
+            28% {
+                transform: scale(1);
+            }
+        }
+        /* Light particles */
+        
+        .light-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat 15s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        @keyframes particleFloat {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            50% {
+                transform: translate(var(--tx), var(--ty)) scale(1.5);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        /* Responsive */
+        
+        @media (max-width: 768px) {
+            .cinematic-text {
+                font-size: 1.5rem;
+            }
+            .love-line {
+                font-size: 1.2rem;
+            }
+            .love-line.name {
+                font-size: 1.8rem;
+            }
+            .final-words {
+                font-size: 1.8rem;
+            }
+            .figure-container {
+                padding: 0 8%;
+            }
+            .moving-silhouettes {
+                gap: 250px;
+            }
+            .teddy-bear {
+                width: 90px;
+                height: 115px;
+            }
+            .teddy-head {
+                width: 68px;
+                height: 68px;
+            }
+            .teddy-body {
+                width: 80px;
+                height: 85px;
+                top: 57px;
+            }
+            .teddy-arm {
+                width: 24px;
+                height: 58px;
+                top: 65px;
+            }
+            .teddy-bear.left-bear {
+                left: calc(50% - 130px);
+            }
+            .teddy-bear.right-bear {
+                left: calc(50% + 40px);
+            }
+            .teddy-bear.hugging.left-bear {
+                left: calc(50% - 52px) !important;
+            }
+            .teddy-bear.hugging.right-bear {
+                left: calc(50% - 38px) !important;
+            }
+            .embrace-container {
+                height: 60%;
+            }
+            .hug-button {
+                padding: 1rem 2.5rem;
+                font-size: 0.95rem;
+            }
+            .letter-content {
+                padding: 2rem 1.5rem;
+            }
+            .letterbox {
+                height: 5vh;
+            }
+            #muteBtn {
+                top: calc(5vh + 15px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Letterbox bars -->
+    <div class="letterbox letterbox-top"></div>
+    <div class="letterbox letterbox-bottom"></div>
+
+    <!-- Enter Screen -->
+    <div id="enterScreen">
+        <div class="enter-title">a memory for you</div>
+        <button id="enterBtn">begin</button>
+    </div>
+
+    <!-- Main Experience -->
+    <div id="experience">
+        <audio id="bgMusic" loop>
+            <source src="Pal Pal Dil Ke Paas - Title  Arijit Singh  Karan Deol, Sahher  Parampara, Sachet, Rishi Rich.mp3" type="audio/mpeg">
+        </audio>
+
+        <div id="muteBtn">🔊</div>
+        <div class="vignette"></div>
+
+        <!-- Scene 1: The Distance -->
+        <div class="scene active" id="scene1">
+            <div class="deep-space" id="deepSpace"></div>
+            <div class="cinematic-text italic" id="text1" style="margin-bottom: 4rem;">Some days…</div>
+            <div class="cinematic-text italic" id="text2" style="margin-bottom: 1rem;">the world feels impossibly vast…
+            </div>
+            <div class="cinematic-text italic" id="text3">when I can't hold you.</div>
+
+            <div class="figure-container" id="figures1">
+                <div class="human-silhouette">
+                    <div class="head"></div>
+                    <div class="body"></div>
+                    <div class="legs">
+                        <div class="leg leg-left"></div>
+                        <div class="leg leg-right"></div>
+                    </div>
+                </div>
+                <div class="heart-center" id="heartCenter1">💗</div>
+                <div class="human-silhouette">
+                    <div class="head"></div>
+                    <div class="body"></div>
+                    <div class="legs">
+                        <div class="leg leg-left"></div>
+                        <div class="leg leg-right"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 2: The Longing -->
+        <div class="scene" id="scene2">
+            <div class="light-rays" id="lightRays">
+                <div class="ray" style="left: 40%; animation-delay: 0s;"></div>
+                <div class="ray" style="left: 50%; animation-delay: 1s;"></div>
+                <div class="ray" style="left: 60%; animation-delay: 0.5s;"></div>
+            </div>
+
+            <div class="cinematic-text italic" id="text4" style="margin-bottom: 3rem;">But something pulls us back…
+            </div>
+            <div class="cinematic-text italic" id="text5">Love doesn't measure distance.</div>
+
+            <div class="moving-silhouettes" id="figures2">
+                <div class="human-silhouette">
+                    <div class="head"></div>
+                    <div class="body"></div>
+                    <div class="legs">
+                        <div class="leg leg-left"></div>
+                        <div class="leg leg-right"></div>
+                    </div>
+                </div>
+                <div class="heart-center" style="opacity: 1; font-size: 5rem; animation-duration: 2s;">💗</div>
+                <div class="human-silhouette">
+                    <div class="head"></div>
+                    <div class="body"></div>
+                    <div class="legs">
+                        <div class="leg leg-left"></div>
+                        <div class="leg leg-right"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 3: The Embrace -->
+        <div class="scene" id="scene3">
+            <div class="embrace-container">
+                <!-- Left Teddy Bear -->
+                <div class="teddy-bear left-bear" id="teddyLeft">
+                    <div class="teddy-head">
+                        <div class="teddy-ear left">
+                            <div class="teddy-ear-inner"></div>
+                        </div>
+                        <div class="teddy-ear right">
+                            <div class="teddy-ear-inner"></div>
+                        </div>
+                        <div class="teddy-eyes">
+                            <div class="teddy-eye"></div>
+                            <div class="teddy-eye"></div>
+                        </div>
+                        <div class="teddy-snout">
+                            <div class="teddy-nose"></div>
+                        </div>
+                    </div>
+                    <div class="teddy-body">
+                        <div class="teddy-belly"></div>
+                        <div class="teddy-heart">💙</div>
+                    </div>
+                    <div class="teddy-arm left">
+                        <div class="teddy-paw"></div>
+                    </div>
+                    <div class="teddy-arm right">
+                        <div class="teddy-paw"></div>
+                    </div>
+                    <div class="teddy-legs">
+                        <div class="teddy-leg">
+                            <div class="teddy-foot"></div>
+                        </div>
+                        <div class="teddy-leg">
+                            <div class="teddy-foot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Teddy Bear -->
+                <div class="teddy-bear right-bear" id="teddyRight">
+                    <div class="teddy-head">
+                        <div class="teddy-ear left">
+                            <div class="teddy-ear-inner"></div>
+                        </div>
+                        <div class="teddy-ear right">
+                            <div class="teddy-ear-inner"></div>
+                        </div>
+                        <div class="teddy-eyes">
+                            <div class="teddy-eye"></div>
+                            <div class="teddy-eye"></div>
+                        </div>
+                        <div class="teddy-snout">
+                            <div class="teddy-nose"></div>
+                        </div>
+                    </div>
+                    <div class="teddy-body">
+                        <div class="teddy-belly"></div>
+                        <div class="teddy-heart">💖</div>
+                    </div>
+                    <div class="teddy-arm left">
+                        <div class="teddy-paw"></div>
+                    </div>
+                    <div class="teddy-arm right">
+                        <div class="teddy-paw"></div>
+                    </div>
+                    <div class="teddy-legs">
+                        <div class="teddy-leg">
+                            <div class="teddy-foot"></div>
+                        </div>
+                        <div class="teddy-leg">
+                            <div class="teddy-foot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="embrace-glow" id="embraceGlow"></div>
+                <div class="heart-burst" id="heartBurst"></div>
+            </div>
+            <button class="hug-button" id="hugButton">Send My Hug to Arpita</button>
+        </div>
+
+        <!-- Scene 4: The Words -->
+        <div class="scene" id="scene4">
+            <div class="letter-content" id="letterBox">
+                <div class="love-line" id="line1">Happy Hug Day,</div>
+                <div class="love-line name" id="line2">Arpita</div>
+                <div class="love-line" id="line3">No matter how far we are,</div>
+                <div class="love-line" id="line4">my arms will always find you.</div>
+                <div class="love-line" id="line5">You are my calm.</div>
+                <div class="love-line" id="line6">My safest place.</div>
+                <div class="love-line" id="line7">My forever warmth.</div>
+                <div class="love-line" id="line8">And today…</div>
+                <div class="love-line" id="line9">I'm holding you closer than ever.</div>
+            </div>
+        </div>
+
+        <!-- Scene 5: Forever -->
+        <div class="scene" id="scene5">
+            <div class="eternal-embrace">
+                <div class="embrace-icon">🫂</div>
+            </div>
+            <div class="final-words">Forever your hug. Always.</div>
+            <div class="eternal-heart">💗</div>
+        </div>
+    </div>
+
+    <script>
+        // Generate deep space stars
+        const deepSpace = document.getElementById('deepSpace');
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 3 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 4 + 's';
+            star.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            deepSpace.appendChild(star);
+        }
+
+        // Shooting stars
+        function createShootingStar() {
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+            star.style.left = Math.random() * 80 + 10 + '%';
+            star.style.top = Math.random() * 40 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            deepSpace.appendChild(star);
+            setTimeout(() => star.remove(), 4000);
+        }
+
+        setInterval(createShootingStar, 3000);
+
+        // Light particles for all scenes
+        document.querySelectorAll('.scene').forEach(scene => {
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'light-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.setProperty('--tx', (Math.random() * 200 - 100) + 'px');
+                particle.style.setProperty('--ty', (Math.random() * 200 - 100) + 'px');
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                scene.appendChild(particle);
+            }
+        });
+
+        // Enter experience
+        const enterBtn = document.getElementById('enterBtn');
+        const enterScreen = document.getElementById('enterScreen');
+        const experience = document.getElementById('experience');
+        const bgMusic = document.getElementById('bgMusic');
+        const letterboxes = document.querySelectorAll('.letterbox');
+
+        enterBtn.addEventListener('click', () => {
+            enterScreen.classList.add('hidden');
+            experience.classList.add('active');
+            letterboxes.forEach(box => box.classList.add('active'));
+
+            const playPromise = bgMusic.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log('Autoplay prevented:', error);
+                });
+            }
+
+            startCinematicJourney();
+        });
+
+        // Mute toggle
+        const muteBtn = document.getElementById('muteBtn');
+        let muted = false;
+        muteBtn.addEventListener('click', () => {
+            muted = !muted;
+            bgMusic.muted = muted;
+            muteBtn.textContent = muted ? '🔇' : '🔊';
+        });
+
+        // Cinematic timeline
+        function startCinematicJourney() {
+            setTimeout(() => reveal('text1'), 1000);
+            setTimeout(() => reveal('text2'), 4500);
+            setTimeout(() => reveal('text3'), 8000);
+            setTimeout(() => reveal('figures1'), 11000);
+            setTimeout(() => reveal('heartCenter1'), 14500);
+
+            setTimeout(() => transition('scene1', 'scene2'), 18000);
+            setTimeout(() => reveal('text4'), 19500);
+            setTimeout(() => reveal('text5'), 23000);
+
+            setTimeout(() => transition('scene2', 'scene3'), 28000);
+            setTimeout(() => reveal('hugButton'), 29500);
+        }
+
+        function reveal(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.opacity = '1';
+        }
+
+        function transition(fromId, toId) {
+            document.getElementById(fromId).classList.remove('active');
+            document.getElementById(toId).classList.add('active');
+        }
+
+        // Hug button interaction
+        document.getElementById('hugButton').addEventListener('click', () => {
+            const btn = document.getElementById('hugButton');
+            btn.style.opacity = '0';
+            btn.style.pointerEvents = 'none';
+
+            const teddyLeft = document.getElementById('teddyLeft');
+            const teddyRight = document.getElementById('teddyRight');
+            const embraceGlow = document.getElementById('embraceGlow');
+            const heartBurst = document.getElementById('heartBurst');
+
+            // Start the hug
+            setTimeout(() => {
+                teddyLeft.classList.add('hugging');
+                teddyRight.classList.add('hugging');
+            }, 800);
+
+            // Glow appears
+            setTimeout(() => {
+                embraceGlow.style.opacity = '1';
+            }, 3500);
+
+            // Sparkles around the hug
+            for (let i = 0; i < 40; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    sparkle.style.left = 50 + (Math.random() * 20 - 10) + '%';
+                    sparkle.style.top = 45 + (Math.random() * 15 - 7.5) + '%';
+                    heartBurst.appendChild(sparkle);
+                    setTimeout(() => sparkle.remove(), 1500);
+                }, i * 80);
+            }
+
+            // Heart burst
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'burst-heart';
+                    heart.textContent = ['💗', '💖', '💕', '💓', '💝'][Math.floor(Math.random() * 5)];
+                    heart.style.left = 50 + (Math.random() * 40 - 20) + '%';
+                    heart.style.bottom = '40%';
+                    heart.style.animation = `floatUp ${2.5 + Math.random() * 2}s ease-out forwards`;
+                    heart.style.animationDelay = (Math.random() * 0.8) + 's';
+                    heartBurst.appendChild(heart);
+                }, i * 180);
+            }
+
+            // Message reveal
+            setTimeout(() => {
+                transition('scene3', 'scene4');
+                document.getElementById('letterBox').classList.add('revealed');
+
+                setTimeout(() => reveal('line1'), 800);
+                setTimeout(() => reveal('line2'), 2200);
+                setTimeout(() => reveal('line3'), 4000);
+                setTimeout(() => reveal('line4'), 5800);
+                setTimeout(() => reveal('line5'), 7600);
+                setTimeout(() => reveal('line6'), 8800);
+                setTimeout(() => reveal('line7'), 10000);
+                setTimeout(() => reveal('line8'), 12000);
+                setTimeout(() => reveal('line9'), 13800);
+
+                setTimeout(() => transition('scene4', 'scene5'), 18000);
+            }, 6000);
+        });
+
+        // Heart float animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatUp {
+                0% {
+                    opacity: 0;
+                    transform: translateY(0) scale(0.4) rotate(0deg);
+                }
+                25% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-450px) scale(2) rotate(${Math.random() * 720 - 360}deg);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
+</body>
+
+</html>
